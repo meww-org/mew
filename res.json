@@ -1,0 +1,18 @@
+{
+  "name": "layout.tsx",
+  "path": "src/app/(application)/layout.tsx",
+  "sha": "5c0ff1ffcc675699032b304d176ed34725ee0416",
+  "size": 382,
+  "url": "https://api.github.com/repos/zshlabs/datewise/contents/src/app/(application)/layout.tsx?ref=main",
+  "html_url": "https://github.com/zshlabs/datewise/blob/main/src/app/(application)/layout.tsx",
+  "git_url": "https://api.github.com/repos/zshlabs/datewise/git/blobs/5c0ff1ffcc675699032b304d176ed34725ee0416",
+  "download_url": "https://raw.githubusercontent.com/zshlabs/datewise/main/src/app/(application)/layout.tsx",
+  "type": "file",
+  "content": "aW1wb3J0IHsgTGF5b3V0UHJvcHMgfSBmcm9tICJAL3R5cGVzL3Byb3BzIjsK\naW1wb3J0IFNpZGViYXIgZnJvbSAiQC9hcHAvKGFwcGxpY2F0aW9uKS9jb21w\nb25lbnRzL1tzaWRlYmFyXS9TaWRlYmFyIjsKaW1wb3J0IEhlYWRlciBmcm9t\nICIuL2NvbXBvbmVudHMvW2hlYWRlcl0vSGVhZGVyIjsKCmZ1bmN0aW9uIEFw\ncGxpY2F0aW9uTGF5b3V0KHsgY2hpbGRyZW4gfTogTGF5b3V0UHJvcHMpIHsK\nICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xz\nLVsyNTZweCwxZnJdIGgtc2NyZWVuIj4KICAgICAgPFNpZGViYXIgLz4KICAg\nICAge2NoaWxkcmVufQogICAgPC9kaXY+CiAgKTsKfQoKZXhwb3J0IGRlZmF1\nbHQgQXBwbGljYXRpb25MYXlvdXQ7Cg==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/zshlabs/datewise/contents/src/app/(application)/layout.tsx?ref=main",
+    "git": "https://api.github.com/repos/zshlabs/datewise/git/blobs/5c0ff1ffcc675699032b304d176ed34725ee0416",
+    "html": "https://github.com/zshlabs/datewise/blob/main/src/app/(application)/layout.tsx"
+  }
+}
