@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { getRepoStructure } from "@/app/action";
+import { getFiles } from "@/app/action";
 export default function RepoForm() {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [structure, setStructure] = React.useState<string[] | string>(" ");
@@ -11,7 +11,7 @@ export default function RepoForm() {
         setLoading(true);
         const startTime = Date.now();
         try {
-            const response = await getRepoStructure("https://github.com/zshlabs/datewise");
+            const response = await getFiles("I need to add a footer to the application page.","https://github.com/zshlabs/datewise");
             console.log(response);
             setStructure(response);
         } catch (error) {
@@ -35,7 +35,7 @@ return (
     <div>
         <div>RepoForm</div>
         <div>Time taken: {timeTaken} ms</div>
-        <div>{JSON.stringify(structure, null, 2)}</div>
+        <div className="mx-20">{structure}</div>
     </div>
 )
 }

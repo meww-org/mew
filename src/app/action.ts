@@ -3,8 +3,24 @@ import fetch from "node-fetch";
 import { db } from "@/lib/db/client";
 import { repos } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import anthropic from "@/lib/claude/client";
 
-export async function getRepoStructure(repoUrl: string) {
+
+
+export async function getFiles(question:string,repoUrl:string){
+  const folderStructure = await getRepoStructure(repoUrl);
+  const response  = await anthropic.messages.create({
+    model:'claude-3-opus-20240229',
+    max_tokens: 3000,
+    messages: [
+      {"role": "user", "content": `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. here is question - ${question}, The you'll need to read to make the changes in the code. here is folder structure of the repo - ${folderStructure} , give me response in json format and only give file names I'll need to read.`},
+    ],
+  })
+  console.log("AI response - ",response.content[0].text);
+  return response.content[0].text;
+}
+
+async function getRepoStructure(repoUrl: string) {
   const exists = await db.select().from(repos).where(eq(repos.url, repoUrl));
   console.log("exists:", exists);
   if (exists.length > 0) {
