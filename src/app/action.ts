@@ -1,7 +1,7 @@
 "use server";
 import fetch from "node-fetch";
 import { db } from "@/lib/db/client";
-import { repos } from "@/lib/db/schema";
+import { repos, files } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import anthropic from "@/lib/claude/client";
 
@@ -24,24 +24,83 @@ interface FileContent {
   };
 }
 
-async function readFileFromGithub(repoUrl:string, filePath:string) {
+interface Content {
+  filepath: string;
+  content: string;
+}
 
+async function generateResponse(question: string, contents: Content[]) {
+  const contentsString = contents.map((content) => `\n- ${content.filepath}: ${content.content}`).join("");
+  const response = await anthropic.messages.create({
+    model: "claude-3-haiku-20240307",
+    max_tokens: 4096,
+    messages: [
+      {
+        role: "user",
+        content: `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. Here is the question - ${question}, and here are the file contents - ${contentsString}.
+        Give response in steps. Like Step 1 , Step 2 , so on. Please give the response in markdown format. Always give code in code blocks and also the new code.`,
+      },
+    ],
+  });
+  console.log("AI response - ", response.content[0].text);
+  return response.content[0].text;
+}
+
+async function readFileFromGithub(repoUrl: string, filePath: string) {
   const splitUrl = repoUrl.split("/");
   const owner = splitUrl[3];
   const repo = splitUrl[4];
 
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+
+  const exists = await db
+    .select()
+    .from(files)
+    .where(eq(files.path, `${repoUrl}/${filePath}`));
+
+  if (exists.length > 0) {
+    return { path: exists[0].abspath, content: exists[0].content };
+  }
+
   const response = await fetch(url, {
     headers: {
       Authorization: `token ${process.env.GITHUB_TOKEN!}`,
       "User-Agent": "anuragts",
     },
-  });  
-  const fileContents = await response.json() as FileContent;
-  return fileContents.content;
+  });
+
+  if (response.status === 404) {
+    return;
+  }
+
+  const fileContents = (await response.json()) as FileContent;
+
+  console.log("fileContents:", fileContents);
+
+  const repo_id = await db
+    .select({ id: repos.id })
+    .from(repos)
+    .where(eq(repos.url, repoUrl));
+
+  const id = repo_id[0].id;
+
+  const result = await db.insert(files).values({
+    name: fileContents.name,
+    path: `${repoUrl}/${fileContents.path}`,
+    content: fileContents.content,
+    abspath: fileContents.path,
+    repoId: id,
+  });
+
+  console.log("result:", result);
+
+  return {
+    path: `${repoUrl}/${fileContents.path}`,
+    content: fileContents.content,
+  };
 }
 
-function extractFilePaths(jsonString:string) {
+function extractFilePaths(jsonString: string) {
   // Define the regex pattern to match file names
   const regexPattern = /"([^"]+)"/g;
 
@@ -56,24 +115,37 @@ function extractFilePaths(jsonString:string) {
   return filePaths;
 }
 
-export async function getFiles(question:string,repoUrl:string){
+export async function getFiles(question: string, repoUrl: string) {
   const folderStructure = await getRepoStructure(repoUrl);
-  const response  = await anthropic.messages.create({
-    model:'claude-3-opus-20240229', 
-    max_tokens: 3000,
+  const response = await anthropic.messages.create({
+    model: "claude-3-haiku-20240307",
+    max_tokens: 4096,
     messages: [
-      {"role": "user", "content": `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. here is question - ${question}, The you'll need to read to make the changes in the code. here is folder structure of the repo - ${folderStructure} , give me response in json format and only give file names I'll need to read.`},
+      {
+        role: "user",
+        content: `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. here is question - ${question}, The you'll need to read to make the changes in the code. here is folder structure of the repo - ${folderStructure} , give me response in json format and only give file names I'll need to read.`,
+      },
     ],
-  })
-  console.log("AI response - ",response.content[0].text);
+  });
+  console.log("AI response - ", response.content[0].text);
   const links = extractFilePaths(response.content[0].text);
-  let base64Content = await readFileFromGithub(repoUrl, 'src/app/(application)/layout.tsx');
-  let content = Buffer.from(base64Content, 'base64').toString('utf8');
+  const contents = await Promise.all(
+    links.map(async (link) => {
+      let base64Content = await readFileFromGithub(repoUrl, link);
+      if (!base64Content) {
+        return;
+      }
+      let content = Buffer.from(base64Content.content, "base64").toString("utf8");
+      return { filepath: link, content: content };
+    })
+  );
 
-  console.log("readFile - ",content);
-
-  console.log("links - ",links);
-  return `${content}`;
+  console.log("contents - ", contents);
+  
+  const validContents = contents.filter((content: Content | undefined) => content !== undefined) as Content[];
+  const markdownResponse = await generateResponse(question, validContents);
+  
+  return markdownResponse;
 }
 
 async function getRepoStructure(repoUrl: string) {
