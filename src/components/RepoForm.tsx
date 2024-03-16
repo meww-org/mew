@@ -12,7 +12,7 @@ export default function RepoForm() {
         setLoading(true);
         const startTime = Date.now();
         try {
-            const response = await getFiles("Migrate from React to VueJS","https://github.com/soumyajit4419/Portfolio");
+            const response = await getFiles("Explain this project and how to setup it locally","https://github.com/soumyajit4419/Portfolio");
             console.log(response);
             setStructure(response);
         } catch (error) {

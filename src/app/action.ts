@@ -38,7 +38,7 @@ async function generateResponse(question: string, contents: Content[]) {
       {
         role: "user",
         content: `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. Here is the question - ${question}, and here are the file contents - ${contentsString}.
-        Give response in steps. Like Step 1 , Step 2 , so on. Please give the response in markdown format. Always give code in code blocks and also the new code.`,
+        Give response in steps if possible. Like Step 1 , Step 2 , so on. Please give the response in markdown format. Always give code in code blocks and also the new code.`,
       },
     ],
   });
