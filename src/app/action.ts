@@ -115,8 +115,7 @@ function extractFilePaths(jsonString: string) {
   return filePaths;
 }
 
-export async function getFiles(question: string, repoUrl: string) {
-  const folderStructure = await getRepoStructure(repoUrl);
+export async function getAIResponse(question: string, folderStructure: string[]) {
   const response = await anthropic.messages.create({
     model: "claude-3-haiku-20240307",
     max_tokens: 4096,
@@ -128,7 +127,10 @@ export async function getFiles(question: string, repoUrl: string) {
     ],
   });
   console.log("AI response - ", response.content[0].text);
-  const links = extractFilePaths(response.content[0].text);
+  return extractFilePaths(response.content[0].text);
+}
+
+export async function getFileContents(repoUrl: string, links: string[]) {
   const contents = await Promise.all(
     links.map(async (link) => {
       let base64Content = await readFileFromGithub(repoUrl, link);
@@ -139,16 +141,18 @@ export async function getFiles(question: string, repoUrl: string) {
       return { filepath: link, content: content };
     })
   );
-
   console.log("contents - ", contents);
-  
-  const validContents = contents.filter((content: Content | undefined) => content !== undefined) as Content[];
+  return contents.filter((content: Content | undefined) => content !== undefined) as Content[];
+}
+
+export async function getFiles(question: string, repoUrl: string, folderStructure: string[]) {
+  const links = await getAIResponse(question, folderStructure);
+  const validContents = await getFileContents(repoUrl, links);
   const markdownResponse = await generateResponse(question, validContents);
-  
   return markdownResponse;
 }
 
-async function getRepoStructure(repoUrl: string) {
+export async function getRepoStructure(repoUrl: string) {
   const exists = await db.select().from(repos).where(eq(repos.url, repoUrl));
   console.log("exists:", exists);
   if (exists.length > 0) {
@@ -160,7 +164,7 @@ async function getRepoStructure(repoUrl: string) {
   const repo = splitUrl[4];
   const paths: string[] = [];
   await fetchDirectory(owner, repo, "", paths);
-  console.log(paths);
+  // console.log(paths);
   addStructuretoDB(`${paths}`, repoUrl);
   return paths;
 }
