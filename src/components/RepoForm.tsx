@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { getFiles } from "@/app/action";
+import { getFiles,getRepoStructure } from "@/app/action";
 import ReactMarkdown from 'react-markdown';
 export default function RepoForm() {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -11,8 +11,14 @@ export default function RepoForm() {
     const fetchRepoStructure = async () => {
         setLoading(true);
         const startTime = Date.now();
+
         try {
-            const response = await getFiles("Explain this project and how to setup it locally","https://github.com/soumyajit4419/Portfolio");
+            // First, get the repository structure
+            const repoStructure = await getRepoStructure("https://github.com/soumyajit4419/Portfolio");
+            console.log(repoStructure);
+
+            // Then, get the files
+            const response = await getFiles("Explain this project and how to setup it locally","https://github.com/soumyajit4419/Portfolio",repoStructure);
             console.log(response);
             setStructure(response);
         } catch (error) {
