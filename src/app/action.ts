@@ -29,10 +29,21 @@ interface Content {
   content: string;
 }
 
+function isJson(str: string) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 async function generateResponse(question: string, contents: Content[]) {
-  const contentsString = contents.map((content) => `\n- ${content.filepath}: ${content.content}`).join("");
+  const contentsString = contents
+    .map((content) => `\n- ${content.filepath}: ${content.content}`)
+    .join("");
   const response = await anthropic.messages.create({
-    model: "claude-3-haiku-20240307",
+    model: "claude-3-opus-20240229",
     max_tokens: 4096,
     messages: [
       {
@@ -115,21 +126,29 @@ function extractFilePaths(jsonString: string) {
   return filePaths;
 }
 
-export async function getAIResponse(question: string, folderStructure: string[]) {
-  const response = await anthropic.messages.create({
-    model: "claude-3-haiku-20240307",
-    max_tokens: 4096,
-    messages: [
-      {
-        role: "user",
-        content: `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. here is question - ${question}, The you'll need to read to make the changes in the code. here is folder structure of the repo - ${folderStructure} , give me response in json format and only give file names I'll need to read.`,
-      },
-    ],
-  });
+export async function getAIResponse(
+  question: string,
+  folderStructure: string[]
+) {
+  let response;
+  let retryCount = 0;
+  do {
+    response = await anthropic.messages.create({
+      model: "claude-3-haiku-20240307",
+      max_tokens: 4096,
+      messages: [
+        {
+          role: "user",
+          content: `So you are my AI code assistant. So according to the question you have to give me the files which I need to read to make the changes in the code. here is question - ${question}, The you'll need to read to make the changes in the code. here is folder structure of the repo - ${folderStructure} , give me response in json format and only give file names I'll need to read.`,
+        },
+      ],
+    });
+    retryCount++;
+  } while (!isJson(response.content[0].text) && retryCount < 3);
   console.log("AI response - ", response.content[0].text);
-  return extractFilePaths(response.content[0].text);
+  let filePaths = extractFilePaths(response.content[0].text);
+  return filePaths.filter((path) => path !== undefined);
 }
-
 export async function getFileContents(repoUrl: string, links: string[]) {
   const contents = await Promise.all(
     links.map(async (link) => {
@@ -137,15 +156,23 @@ export async function getFileContents(repoUrl: string, links: string[]) {
       if (!base64Content) {
         return;
       }
-      let content = Buffer.from(base64Content.content, "base64").toString("utf8");
+      let content = Buffer.from(base64Content.content, "base64").toString(
+        "utf8"
+      );
       return { filepath: link, content: content };
     })
   );
   console.log("contents - ", contents);
-  return contents.filter((content: Content | undefined) => content !== undefined) as Content[];
+  return contents.filter(
+    (content: Content | undefined) => content !== undefined
+  ) as Content[];
 }
 
-export async function getFiles(question: string, repoUrl: string, folderStructure: string[]) {
+export async function getFiles(
+  question: string,
+  repoUrl: string,
+  folderStructure: string[]
+) {
   const links = await getAIResponse(question, folderStructure);
   const validContents = await getFileContents(repoUrl, links);
   const markdownResponse = await generateResponse(question, validContents);
