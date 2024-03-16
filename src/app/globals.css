@@ -56,3 +56,25 @@ blockquote > * {
 .markdown > h2.tags {
   color: #93a6ac;
 }
+
+.markdown > pre {
+  background-color: #f5f5f5; /* Light grey background */
+  border: 1px solid #ddd; /* Light grey border */
+  border-left: 4px solid #f36d33; /* Orange left border for emphasis */
+  padding: 1em;
+  overflow: auto; /* Ensures the block is scrollable if the content is wide */
+  line-height: 1.45;
+  margin-bottom: 1.6em;
+}
+
+/* Specific styles for typescript code blocks */
+.markdown > pre code.language-typescript {
+  font-family: "Source Code Pro", monospace; /* Monospaced font for code */
+  font-size: 0.95em;
+}
+
+/* Optional: Styles for JSON code blocks in package.json example */
+.markdown > pre code.language-json {
+  font-family: "Source Code Pro", monospace;
+  font-size: 0.95em;
+}
