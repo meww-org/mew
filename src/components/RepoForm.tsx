@@ -16,6 +16,7 @@ import {
   ScrollShadow,
   Textarea,
 } from "@nextui-org/react";
+
 export default function RepoForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [structure, setStructure] = useState<string>(" ");
@@ -100,7 +101,7 @@ export default function RepoForm() {
             offset={100}
             orientation="horizontal"
             hideScrollBar
-            className=" min-h-[650px] max-h-[730px]  "
+            className=" min-h-[650px] max-h-[650px]  "
           >
             <ReactMarkdown className="markdown mx-20">
               {structure}
