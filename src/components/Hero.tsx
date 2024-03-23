@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 function Text() {
   return (
@@ -15,9 +16,13 @@ function Text() {
           you do best.
         </div>
         <div className="mt-14">
-            <Link href={'https://dub.sh/meww'} className="bg-accent text-zinc-950 px-8 py-4 font-bold rounded-full">
-                Join the waitlist
-            </Link>
+          <Link
+            href={"https://dub.sh/meww"}
+            className="bg-accent w-[12vw] text-zinc-950 px-8 py-4 font-bold rounded-full hover:bg-[#07b546] flex items-center justify-center"
+          >
+            Join the waitlist
+            <ArrowRightIcon className="h-5 w-5 ml-2 text-black" />
+          </Link>
         </div>
       </div>
     </>
