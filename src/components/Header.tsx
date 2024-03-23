@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Header = () => (
   <header className="bg-transparent  text-base p-2 pb-4 md:flex md:justify-between md:items-center mt-6 mb-2 ">
-    <div className="flex justify-between items-center">
+    <Link href={'/'} className="flex justify-between items-center">
       <div className="w-12 h-12 relative">
         <Image
           src={"/lightlogo.webp"}
@@ -14,7 +14,10 @@ const Header = () => (
           alt="logo"
         />
       </div>
-    </div>
+      <div className="mx-3 text-2xl font-black">
+        Meww
+      </div>
+    </Link>
     <div className="hidden md:block space-x-10">
       <Link href="examples" className=" hover:text-slate-200">
         examples
