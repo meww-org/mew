@@ -15,13 +15,19 @@ function Text() {
           features faster. Meww does the heavy lifting so you can focus on what
           you do best.
         </div>
-        <div className="mt-14">
+        <div className="mt-14 flex">
           <Link
             href={"https://dub.sh/meww"}
-            className="bg-accent w-[12vw] text-zinc-950 px-8 py-4 font-bold rounded-full hover:bg-[#07b546] flex items-center justify-center"
+            className="bg-accent w-[12vw] text-zinc-950 px-2 py-4 font-bold rounded-full hover:bg-[#07b546] flex items-center justify-center"
           >
             Join the waitlist
             <ArrowRightIcon className="h-5 w-5 ml-2 text-black" />
+          </Link>
+          <Link
+            href={"/examples"}
+            className="bg-zinc-950 w-[12vw] mx-5 text-accent px-2 py-4 font-bold rounded-full border-2 border-accent hover:bg-zinc-900 flex items-center justify-center"
+          >
+            Try the examples
           </Link>
         </div>
       </div>
