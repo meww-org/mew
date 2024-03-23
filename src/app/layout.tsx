@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-primary text-secondary">
+    <html lang="en" className="bg-zinc-950 text-primary font-semibold mx-60">
       <body className={open_sans.className}>
         <Providers>
           <Header />

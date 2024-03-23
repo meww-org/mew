@@ -18,6 +18,7 @@ const config: Config = {
         "primary": "#f6fff8",
         "secondary": "#000000",
         "accent": "#22c55e",
+        "background-dark": "#0d0a0b"
       }
     },
   },

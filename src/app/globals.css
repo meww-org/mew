@@ -16,10 +16,6 @@
   }
 }
 
-html {
-  color: rgb(var(--secondary));
-  background-color: rgb(var(--primary));
-}
 
 @layer utilities {
   .text-balance {
@@ -72,4 +68,18 @@ blockquote > * {
 .markdown > pre code.language-json {
   font-family: "Source Code Pro", monospace;
   font-size: 0.95em;
+}
+
+
+/* green gradient circle */
+
+.gradient-circle {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(to top, #22c55e, #09090b);
+  border-radius: 50%;
+  position: relative;
+  left: 20vw;
+  bottom: 20vh;
+  filter: blur(120px);
 }
