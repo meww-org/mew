@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Open_Sans } from 'next/font/google'
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import Header from "@/components/Header";
+import Header from "@/components/landing-page/header";
 
-
-const open_sans = Open_Sans({subsets: ["latin"] });
+const open_sans = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Meww",
@@ -23,7 +22,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           {children}
-          </Providers>
+        </Providers>
       </body>
     </html>
   );
