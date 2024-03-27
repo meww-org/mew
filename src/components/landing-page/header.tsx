@@ -39,8 +39,8 @@ function Header() {
           />
         </div>
       </div>
-      <div className="hidden lg:block space-x-10 2xl:ml-64">
-        <Link href="examples" className=" hover:text-slate-200">
+      <div className="hidden lg:flex lg:items-center space-x-10 2xl:ml-64">
+        <Link href="examples" className=" cursor-pointer hover:text-slate-200">
           Examples
         </Link>
         <Button

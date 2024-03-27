@@ -51,7 +51,7 @@ export default function Hero() {
       <div className="absolute lg:hidden block ">
         <GradientCircle />
       </div>
-      <div className="lg:flex lg:flex-row flex-col flex mt-20">
+      <div className="lg:flex lg:flex-row flex-col flex lg:mt-20">
         <Text />
         <HeroImage />
       </div>
